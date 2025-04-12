@@ -3,6 +3,7 @@ import React from 'react';
 import { CodeEditor } from '@/components/code-editor/editor';
 import { CourseCard } from '@/components/dashboard/course-card';
 import { StatsCard } from '@/components/dashboard/stats-card';
+import { ProgressSection } from '@/components/dashboard/progress-section';
 import { AIChat } from '@/components/ai-assistant/ai-chat';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { 
@@ -30,6 +31,7 @@ import { Badge } from '@/components/ui/badge';
 import { Progress } from '@/components/ui/progress';
 import { Separator } from '@/components/ui/separator';
 import { useAuth } from '@/contexts/auth-context';
+import { Link } from 'react-router-dom';
 
 const StudentDashboard = () => {
   const { user } = useAuth();
@@ -225,85 +227,49 @@ const StudentDashboard = () => {
       
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
         <div className="md:col-span-2">
-          <Card>
-            <CardHeader>
-              <CardTitle>Coding Progress</CardTitle>
-              <CardDescription>
-                Your learning tracks and programming skill development
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
-              <div className="space-y-6">
-                <div className="space-y-2">
-                  <div className="flex justify-between items-start">
-                    <div>
-                      <h4 className="font-medium">Data Structures & Algorithms</h4>
-                      <p className="text-sm text-muted-foreground">Fundamental programming concepts and problem-solving techniques</p>
-                    </div>
-                    <Badge className="bg-green-100 text-green-800 hover:bg-green-100">70 problems solved</Badge>
-                  </div>
-                  <Progress value={65} className="h-2" />
-                  <div className="grid grid-cols-2 md:grid-cols-4 gap-2 text-xs">
-                    <div className="border rounded p-2">
-                      <div className="font-medium">Arrays</div>
-                      <div className="text-muted-foreground">18/25 complete</div>
-                    </div>
-                    <div className="border rounded p-2">
-                      <div className="font-medium">Linked Lists</div>
-                      <div className="text-muted-foreground">12/20 complete</div>
-                    </div>
-                    <div className="border rounded p-2">
-                      <div className="font-medium">Trees</div>
-                      <div className="text-muted-foreground">8/15 complete</div>
-                    </div>
-                    <div className="border rounded p-2">
-                      <div className="font-medium">Graphs</div>
-                      <div className="text-muted-foreground">3/10 complete</div>
-                    </div>
-                  </div>
-                </div>
-                
-                <Separator />
-                
-                <div className="space-y-2">
-                  <div className="flex justify-between items-start">
-                    <div>
-                      <h4 className="font-medium">Web Development</h4>
-                      <p className="text-sm text-muted-foreground">Modern frontend and backend development</p>
-                    </div>
-                    <Badge className="bg-blue-100 text-blue-800 hover:bg-blue-100">5 projects completed</Badge>
-                  </div>
-                  <Progress value={75} className="h-2" />
-                  <div className="grid grid-cols-2 md:grid-cols-4 gap-2 text-xs">
-                    <div className="border rounded p-2">
-                      <div className="font-medium">HTML/CSS</div>
-                      <div className="text-muted-foreground">Complete</div>
-                    </div>
-                    <div className="border rounded p-2">
-                      <div className="font-medium">JavaScript</div>
-                      <div className="text-muted-foreground">80% complete</div>
-                    </div>
-                    <div className="border rounded p-2">
-                      <div className="font-medium">React</div>
-                      <div className="text-muted-foreground">65% complete</div>
-                    </div>
-                    <div className="border rounded p-2">
-                      <div className="font-medium">Node.js</div>
-                      <div className="text-muted-foreground">40% complete</div>
-                    </div>
-                  </div>
-                </div>
-                
-                <div className="flex justify-between items-center">
-                  <div className="flex items-center gap-1">
-                    <Flame className="h-4 w-4 text-orange-500" />
-                    <span className="text-sm font-medium">7 day streak</span>
-                  </div>
-                  <Button>Continue Learning</Button>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
+          <ProgressSection 
+            title="Learning Progress" 
+            description="Your academic and coding skill development"
+            items={[
+              {
+                title: "Data Structures & Algorithms",
+                description: "Fundamental programming concepts and problem-solving techniques",
+                value: 65,
+                icon: <Code className="h-4 w-4" />,
+                badgeText: "70 problems solved",
+                items: [
+                  { label: "Arrays", value: "18/25 complete" },
+                  { label: "Linked Lists", value: "12/20 complete" },
+                  { label: "Trees", value: "8/15 complete" },
+                  { label: "Graphs", value: "3/10 complete" }
+                ]
+              },
+              {
+                title: "Web Development",
+                description: "Modern frontend and backend development",
+                value: 75,
+                icon: <Code className="h-4 w-4" />,
+                badgeText: "5 projects completed",
+                items: [
+                  { label: "HTML/CSS", value: "Complete" },
+                  { label: "JavaScript", value: "80% complete" },
+                  { label: "React", value: "65% complete" },
+                  { label: "Node.js", value: "40% complete" }
+                ]
+              }
+            ]}
+          />
+          
+          <div className="flex justify-between items-center mt-4">
+            <div className="flex items-center gap-1">
+              <Flame className="h-4 w-4 text-orange-500" />
+              <span className="text-sm font-medium">7 day streak</span>
+            </div>
+            <Button as={Link} to="/progress">
+              View Detailed Progress
+              <ArrowRight className="ml-2 h-4 w-4" />
+            </Button>
+          </div>
         </div>
         
         <div>
@@ -320,7 +286,7 @@ const StudentDashboard = () => {
                   <BrainCircuit className="h-10 w-10 text-primary opacity-80" />
                   <h3 className="font-medium">Ready to Help</h3>
                   <p className="text-sm text-muted-foreground">Get instant help with your coding problems, course material questions, or project ideas.</p>
-                  <Button>
+                  <Button as={Link} to="/ai-assistant">
                     Chat with AI Assistant
                   </Button>
                 </div>

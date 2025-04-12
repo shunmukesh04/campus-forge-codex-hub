@@ -19,6 +19,7 @@ import AdminDashboard from "./pages/dashboard/admin-dashboard";
 // Feature Pages
 import CodeEditorPage from "./pages/features/code-editor-page";
 import AIAssistantPage from "./pages/features/ai-assistant-page";
+import ProgressPage from "./pages/features/progress-page";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -111,6 +112,11 @@ const App = () => (
               <Route path="/ai-assistant" element={
                 <RoleRoute allowedRoles={['student', 'faculty']}>
                   <AIAssistantPage />
+                </RoleRoute>
+              } />
+              <Route path="/progress" element={
+                <RoleRoute allowedRoles={['student', 'faculty']}>
+                  <ProgressPage />
                 </RoleRoute>
               } />
               <Route path="/calendar" element={
