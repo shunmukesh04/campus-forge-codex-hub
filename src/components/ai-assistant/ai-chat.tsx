@@ -1,11 +1,13 @@
-
 import React, { useState, useRef, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
-import { Send, Code, Loader2, Bot } from 'lucide-react';
+import { Send, Code, Loader2, Bot, Key } from 'lucide-react';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Separator } from '@/components/ui/separator';
 import { useAuth } from '@/contexts/auth-context';
+import { Input } from '@/components/ui/input';
+import { callGroqAPI, GroqMessage } from '@/utils/groq-api';
+import { useToast } from '@/hooks/use-toast';
 
 interface Message {
   id: string;
@@ -25,8 +27,11 @@ export const AIChat = () => {
   ]);
   const [input, setInput] = useState('');
   const [isProcessing, setIsProcessing] = useState(false);
+  const [apiKey, setApiKey] = useState('');
+  const [showApiInput, setShowApiInput] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const { user } = useAuth();
+  const { toast } = useToast();
 
   useEffect(() => {
     scrollToBottom();
@@ -50,32 +55,82 @@ export const AIChat = () => {
     setInput('');
     setIsProcessing(true);
     
-    // Simulate AI thinking time
-    setTimeout(() => {
-      let response = '';
-      
-      if (input.toLowerCase().includes('help') || input.toLowerCase().includes('assist')) {
-        response = "I'd be happy to help! Could you provide more details about what you're working on or what specific programming concept you need assistance with?";
-      } else if (input.toLowerCase().includes('error') || input.toLowerCase().includes('bug')) {
-        response = "I see you're encountering an issue. To help debug effectively, could you share the error message and a code snippet showing where the problem occurs?";
-      } else if (input.toLowerCase().includes('explain') || input.toLowerCase().includes('what is')) {
-        response = "Great question! I'll explain that concept clearly. Is there a specific aspect or use case you're interested in?";
-      } else if (input.toLowerCase().includes('code') || input.toLowerCase().includes('function')) {
-        response = "I can help with that code. Are you looking for a code example, optimization suggestions, or help fixing an issue?";
-      } else {
-        response = "Thanks for your message! I'm here to help with your coding and programming questions. Could you provide some more details about what you're working on?";
+    if (apiKey) {
+      try {
+        // Format messages for Groq API
+        const groqMessages: GroqMessage[] = [
+          {
+            role: 'system',
+            content: 'You are a helpful AI coding assistant. Provide clear, concise, and accurate responses to programming and technical questions.'
+          }
+        ];
+        
+        // Add conversation history (limit to last 10 messages to keep context size reasonable)
+        const conversationHistory = [...messages, userMessage].slice(-10);
+        conversationHistory.forEach(msg => {
+          groqMessages.push({
+            role: msg.role,
+            content: msg.content
+          });
+        });
+
+        // Call Groq API
+        const response = await callGroqAPI(groqMessages, apiKey);
+        
+        const assistantMessage: Message = {
+          id: (Date.now() + 1).toString(),
+          content: response,
+          role: 'assistant',
+          timestamp: new Date()
+        };
+        
+        setMessages(prev => [...prev, assistantMessage]);
+      } catch (error) {
+        // Show error in chat
+        const errorMessage: Message = {
+          id: (Date.now() + 1).toString(),
+          content: `Error: ${error instanceof Error ? error.message : 'Failed to get response from Groq API'}. Please check your API key and try again.`,
+          role: 'assistant',
+          timestamp: new Date()
+        };
+        
+        setMessages(prev => [...prev, errorMessage]);
+        toast({
+          title: "API Error",
+          description: "Failed to communicate with Groq API. Please check your API key.",
+          variant: "destructive"
+        });
+      } finally {
+        setIsProcessing(false);
       }
-      
-      const assistantMessage: Message = {
-        id: (Date.now() + 1).toString(),
-        content: response,
-        role: 'assistant',
-        timestamp: new Date()
-      };
-      
-      setMessages(prev => [...prev, assistantMessage]);
-      setIsProcessing(false);
-    }, 1500);
+    } else {
+      // Fallback to mock responses if no API key is provided
+      setTimeout(() => {
+        let response = '';
+        
+        if (input.toLowerCase().includes('help') || input.toLowerCase().includes('assist')) {
+          response = "I'd be happy to help! Could you provide more details about what you're working on or what specific programming concept you need assistance with?";
+        } else if (input.toLowerCase().includes('error') || input.toLowerCase().includes('bug')) {
+          response = "I see you're encountering an issue. To help debug effectively, could you share the error message and a code snippet showing where the problem occurs?";
+        } else if (input.toLowerCase().includes('explain') || input.toLowerCase().includes('what is')) {
+          response = "Great question! I'll explain that concept clearly. Is there a specific aspect or use case you're interested in?";
+        } else if (input.toLowerCase().includes('code') || input.toLowerCase().includes('function')) {
+          response = "I can help with that code. Are you looking for a code example, optimization suggestions, or help fixing an issue?";
+        } else {
+          response = "Thanks for your message! I'm here to help with your coding and programming questions. Could you provide some more details about what you're working on?";
+        }
+        
+        const assistantMessage: Message = {
+          id: (Date.now() + 1).toString(),
+          content: response,
+          role: 'assistant',
+          timestamp: new Date()
+        };
+        
+        setMessages(prev => [...prev, assistantMessage]);
+        setIsProcessing(false);
+      }, 1500);
+    }
   };
 
   const handleKeyDown = (e: React.KeyboardEvent) => {
@@ -89,6 +144,10 @@ export const AIChat = () => {
     return name.split(' ').map(n => n[0]).join('').toUpperCase();
   };
 
+  const toggleApiKeyInput = () => {
+    setShowApiInput(!showApiInput);
+  };
+
   return (
     <div className="border rounded-md shadow-sm bg-card h-[calc(100vh-12rem)] flex flex-col">
       <div className="p-4 border-b flex items-center gap-3">
@@ -96,11 +155,52 @@ export const AIChat = () => {
           <AvatarImage src="/placeholder.svg" />
           <AvatarFallback className="bg-primary text-primary-foreground">AI</AvatarFallback>
         </Avatar>
-        <div>
+        <div className="flex-1">
           <h3 className="font-medium">AI Coding Assistant</h3>
           <p className="text-xs text-muted-foreground">Your programming companion</p>
         </div>
+        <Button 
+          variant="outline" 
+          size="sm" 
+          onClick={toggleApiKeyInput} 
+          className="gap-1"
+        >
+          <Key className="h-3.5 w-3.5" />
+          {apiKey ? "API Key Set" : "Set API Key"}
+        </Button>
       </div>
+      
+      {showApiInput && (
+        <div className="p-4 border-b">
+          <div className="flex gap-2">
+            <Input
+              type="password"
+              value={apiKey}
+              onChange={(e) => setApiKey(e.target.value)}
+              placeholder="Enter your Groq API key..."
+              className="flex-1"
+            />
+            <Button 
+              onClick={() => {
+                if (apiKey) {
+                  toast({
+                    title: "API Key Updated",
+                    description: "Your Groq API key has been set. The AI assistant will now use Groq's language models.",
+                  });
+                }
+                setShowApiInput(false);
+              }}
+              size="sm"
+            >
+              Save
+            </Button>
+          </div>
+          <p className="text-xs text-muted-foreground mt-1">
+            Get your API key from <a href="https://console.groq.com/keys" target="_blank" rel="noreferrer" className="underline">Groq Console</a>. 
+            Your key is stored locally and never sent to our servers.
+          </p>
+        </div>
+      )}
       
       <div className="flex-1 overflow-auto p-4 space-y-4">
         {messages.map((message) => (
@@ -177,7 +277,7 @@ export const AIChat = () => {
         </div>
         <div className="flex justify-between items-center mt-2">
           <div className="text-xs text-muted-foreground">
-            Powered by AI to assist with code and learning
+            {apiKey ? "Powered by Groq" : "Powered by AI"} to assist with code and learning
           </div>
           <div className="flex gap-2">
             <Button variant="outline" size="sm" className="text-xs h-7">

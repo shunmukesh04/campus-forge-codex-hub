@@ -8,7 +8,7 @@ const AIAssistantPage = () => {
       <div>
         <h1 className="text-2xl font-bold tracking-tight">AI Coding Assistant</h1>
         <p className="text-muted-foreground">
-          Get help with your programming questions and coding challenges
+          Get help with your programming questions and coding challenges, powered by Groq AI
         </p>
       </div>
       
