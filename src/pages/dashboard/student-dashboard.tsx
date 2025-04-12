@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { CodeEditor } from '@/components/code-editor/editor';
 import { CourseCard } from '@/components/dashboard/course-card';
@@ -139,9 +138,11 @@ const StudentDashboard = () => {
               </div>
             </CardContent>
             <CardFooter>
-              <Button variant="outline" className="w-full">
-                View All Courses
-                <ArrowRight className="ml-2 h-4 w-4" />
+              <Button variant="outline" className="w-full" asChild>
+                <Link to="/courses">
+                  View All Courses
+                  <ArrowRight className="ml-2 h-4 w-4" />
+                </Link>
               </Button>
             </CardFooter>
           </Card>
@@ -265,9 +266,11 @@ const StudentDashboard = () => {
               <Flame className="h-4 w-4 text-orange-500" />
               <span className="text-sm font-medium">7 day streak</span>
             </div>
-            <Button as={Link} to="/progress">
-              View Detailed Progress
-              <ArrowRight className="ml-2 h-4 w-4" />
+            <Button asChild>
+              <Link to="/progress">
+                View Detailed Progress
+                <ArrowRight className="ml-2 h-4 w-4" />
+              </Link>
             </Button>
           </div>
         </div>
@@ -286,8 +289,10 @@ const StudentDashboard = () => {
                   <BrainCircuit className="h-10 w-10 text-primary opacity-80" />
                   <h3 className="font-medium">Ready to Help</h3>
                   <p className="text-sm text-muted-foreground">Get instant help with your coding problems, course material questions, or project ideas.</p>
-                  <Button as={Link} to="/ai-assistant">
-                    Chat with AI Assistant
+                  <Button asChild>
+                    <Link to="/ai-assistant">
+                      Chat with AI Assistant
+                    </Link>
                   </Button>
                 </div>
               </div>
