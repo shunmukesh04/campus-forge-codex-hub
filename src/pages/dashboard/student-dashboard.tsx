@@ -3,6 +3,7 @@ import { CodeEditor } from '@/components/code-editor/editor';
 import { CourseCard } from '@/components/dashboard/course-card';
 import { StatsCard } from '@/components/dashboard/stats-card';
 import { ProgressSection } from '@/components/dashboard/progress-section';
+import { AssignmentSection } from '@/components/dashboard/assignment-section';
 import { AIChat } from '@/components/ai-assistant/ai-chat';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { 
@@ -15,7 +16,8 @@ import {
   BrainCircuit, 
   BookMarked, 
   Flame,
-  ArrowRight
+  ArrowRight,
+  FileText
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { 
@@ -36,6 +38,52 @@ const StudentDashboard = () => {
   const { user } = useAuth();
   
   if (!user) return null;
+  
+  // Sample assignments data
+  const assignments = [
+    {
+      id: "assgn-1",
+      title: "Binary Tree Implementation",
+      course: "Data Structures & Algorithms",
+      courseCode: "CS301",
+      dueDate: "Today, 11:59 PM",
+      completed: false,
+      progress: 65,
+      description: "Implement a binary tree with insert, delete, and traversal operations.",
+      priority: "high" as const,
+      status: "in-progress" as const
+    },
+    {
+      id: "assgn-2",
+      title: "Database Normalization Exercise",
+      course: "Database Management Systems",
+      courseCode: "CS304",
+      dueDate: "Tomorrow, 2:00 PM",
+      completed: false,
+      priority: "medium" as const,
+      status: "pending" as const
+    },
+    {
+      id: "assgn-3",
+      title: "React Component Architecture",
+      course: "Web Development",
+      courseCode: "CS310",
+      dueDate: "Sep 20, 11:59 PM",
+      completed: false,
+      priority: "medium" as const,
+      status: "pending" as const
+    },
+    {
+      id: "assgn-4",
+      title: "Linear Regression Model",
+      course: "Machine Learning Fundamentals",
+      courseCode: "CS420",
+      dueDate: "Sep 15, 9:00 AM",
+      completed: true,
+      priority: "low" as const,
+      status: "submitted" as const
+    }
+  ];
   
   return (
     <div className="space-y-6">
@@ -77,10 +125,12 @@ const StudentDashboard = () => {
           trendValue="Same as last month"
         />
         <StatsCard
-          title="Upcoming Deadlines"
-          value="3"
-          icon={<Clock className="h-4 w-4" />}
-          description="Assignments due this week"
+          title="Assignments"
+          value="4"
+          icon={<FileText className="h-4 w-4" />}
+          description="Active assignments"
+          trend="down"
+          trendValue="2 completed this week"
         />
       </div>
       
@@ -217,11 +267,44 @@ const StudentDashboard = () => {
               </div>
             </CardContent>
             <CardFooter>
-              <Button variant="outline" className="w-full">
-                View Calendar
-                <Calendar className="ml-2 h-4 w-4" />
+              <Button variant="outline" className="w-full" asChild>
+                <Link to="/calendar">
+                  View Calendar
+                  <Calendar className="ml-2 h-4 w-4" />
+                </Link>
               </Button>
             </CardFooter>
+          </Card>
+        </div>
+      </div>
+      
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <div className="md:col-span-2">
+          <AssignmentSection assignments={assignments} />
+        </div>
+        
+        <div>
+          <Card className="h-full">
+            <CardHeader>
+              <CardTitle>AI Assistant</CardTitle>
+              <CardDescription>
+                Get help with your coursework and coding problems
+              </CardDescription>
+            </CardHeader>
+            <CardContent className="p-0">
+              <div className="h-[300px] p-4">
+                <div className="border rounded-md p-4 h-full flex flex-col justify-center items-center text-center space-y-3">
+                  <BrainCircuit className="h-10 w-10 text-primary opacity-80" />
+                  <h3 className="font-medium">Ready to Help</h3>
+                  <p className="text-sm text-muted-foreground">Get instant help with your coding problems, course material questions, or project ideas.</p>
+                  <Button asChild>
+                    <Link to="/ai-assistant">
+                      Chat with AI Assistant
+                    </Link>
+                  </Button>
+                </div>
+              </div>
+            </CardContent>
           </Card>
         </div>
       </div>
@@ -273,31 +356,6 @@ const StudentDashboard = () => {
               </Link>
             </Button>
           </div>
-        </div>
-        
-        <div>
-          <Card className="h-full">
-            <CardHeader>
-              <CardTitle>AI Assistant</CardTitle>
-              <CardDescription>
-                Get help with your coursework and coding problems
-              </CardDescription>
-            </CardHeader>
-            <CardContent className="p-0">
-              <div className="h-[300px] p-4">
-                <div className="border rounded-md p-4 h-full flex flex-col justify-center items-center text-center space-y-3">
-                  <BrainCircuit className="h-10 w-10 text-primary opacity-80" />
-                  <h3 className="font-medium">Ready to Help</h3>
-                  <p className="text-sm text-muted-foreground">Get instant help with your coding problems, course material questions, or project ideas.</p>
-                  <Button asChild>
-                    <Link to="/ai-assistant">
-                      Chat with AI Assistant
-                    </Link>
-                  </Button>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
         </div>
       </div>
     </div>

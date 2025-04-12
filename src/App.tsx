@@ -104,6 +104,22 @@ const App = () => (
                   </div>
                 </RoleRoute>
               } />
+              <Route path="/assignments" element={
+                <RoleRoute allowedRoles={['student']}>
+                  <div className="h-full p-4 flex items-center justify-center">
+                    <h2 className="text-xl font-medium">Assignments Page</h2>
+                    <p className="text-muted-foreground">(Under development)</p>
+                  </div>
+                </RoleRoute>
+              } />
+              <Route path="/assignments/:id" element={
+                <RoleRoute allowedRoles={['student']}>
+                  <div className="h-full p-4 flex items-center justify-center">
+                    <h2 className="text-xl font-medium">Assignment Details Page</h2>
+                    <p className="text-muted-foreground">(Under development)</p>
+                  </div>
+                </RoleRoute>
+              } />
               <Route path="/code-editor" element={
                 <RoleRoute allowedRoles={['student', 'faculty']}>
                   <CodeEditorPage />
