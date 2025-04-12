@@ -16,10 +16,28 @@ export interface GroqResponse {
   }[];
 }
 
+// We'll store this key in localStorage for convenience in this frontend-only implementation
+export const saveApiKey = (apiKey: string): void => {
+  localStorage.setItem('groq_api_key', apiKey);
+};
+
+export const getApiKey = (): string | null => {
+  return localStorage.getItem('groq_api_key');
+};
+
+export const clearApiKey = (): void => {
+  localStorage.removeItem('groq_api_key');
+};
+
 export const callGroqAPI = async (
-  messages: GroqMessage[],
-  apiKey: string
+  messages: GroqMessage[]
 ): Promise<string> => {
+  const apiKey = getApiKey();
+  
+  if (!apiKey) {
+    throw new Error('API key not found. Please set your Groq API key first.');
+  }
+  
   try {
     const response = await fetch('https://api.groq.com/openai/v1/chat/completions', {
       method: 'POST',
