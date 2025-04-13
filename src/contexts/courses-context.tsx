@@ -14,9 +14,12 @@ export interface Course {
   nextClass?: string;
 }
 
+// Define what addCourse accepts - note instructor is not required as it will be added automatically
+type AddCourseParams = Omit<Course, 'id' | 'instructor' | 'students'>;
+
 interface CoursesContextType {
   courses: Course[];
-  addCourse: (course: Omit<Course, 'id'>) => void;
+  addCourse: (course: AddCourseParams) => void;
   deleteCourse: (id: string) => void;
 }
 
@@ -71,10 +74,10 @@ export const CoursesProvider: React.FC<{ children: React.ReactNode }> = ({ child
     localStorage.setItem('campusBridgeCourses', JSON.stringify(courses));
   }, [courses]);
 
-  const addCourse = (course: Omit<Course, 'id'>) => {
+  const addCourse = (course: AddCourseParams) => {
     if (!user || user.role !== 'faculty') return;
     
-    const newCourse = {
+    const newCourse: Course = {
       ...course,
       id: Date.now().toString(),
       instructor: user.name,

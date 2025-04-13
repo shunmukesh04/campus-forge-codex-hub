@@ -34,6 +34,8 @@ import {
   SelectValue
 } from '@/components/ui/select';
 
+// This schema matches what addCourse expects without the instructor field
+// since that is added automatically in the context
 const courseSchema = z.object({
   title: z.string().min(5, 'Title must be at least 5 characters'),
   code: z.string().min(2, 'Course code is required'),
