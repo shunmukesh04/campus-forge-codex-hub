@@ -15,7 +15,7 @@ export interface Course {
 }
 
 // Define what addCourse accepts - note instructor is not required as it will be added automatically
-type AddCourseParams = Omit<Course, 'id' | 'instructor' | 'students'>;
+export type AddCourseParams = Omit<Course, 'id' | 'instructor' | 'students'>;
 
 interface CoursesContextType {
   courses: Course[];
