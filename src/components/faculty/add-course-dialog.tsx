@@ -64,7 +64,17 @@ export const AddCourseDialog = () => {
   });
 
   const onSubmit = (values: CourseFormValues) => {
-    addCourse(values);
+    // Cast the form values to ensure they match AddCourseParams type
+    const courseData = {
+      title: values.title,
+      code: values.code,
+      category: values.category,
+      credits: values.credits,
+      description: values.description || undefined,
+      nextClass: values.nextClass || undefined
+    };
+    
+    addCourse(courseData);
     toast({
       title: "Success",
       description: `Course "${values.title}" has been added successfully.`
