@@ -5,6 +5,7 @@ import { StatsCard } from '@/components/dashboard/stats-card';
 import { ProgressSection } from '@/components/dashboard/progress-section';
 import { AssignmentSection } from '@/components/dashboard/assignment-section';
 import { AIChat } from '@/components/ai-assistant/ai-chat';
+import { useCourses } from '@/contexts/courses-context';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { 
   BookOpen, 
@@ -36,6 +37,7 @@ import { Link } from 'react-router-dom';
 
 const StudentDashboard = () => {
   const { user } = useAuth();
+  const { courses } = useCourses();
   
   if (!user) return null;
   
@@ -138,52 +140,19 @@ const StudentDashboard = () => {
         <div className="md:col-span-2">
           <Card>
             <CardHeader>
-              <CardTitle>Recent Courses</CardTitle>
+              <CardTitle>Enrolled Courses</CardTitle>
               <CardDescription>
                 Your enrolled courses and academic progress
               </CardDescription>
             </CardHeader>
             <CardContent>
               <div className="grid gap-4 md:grid-cols-2">
-                {[
-                  {
-                    title: "Data Structures & Algorithms",
-                    code: "CS301",
-                    instructor: "Dr. Robert Chen",
-                    progress: 78,
-                    category: "Core",
-                    credits: 4,
-                    nextClass: "Tomorrow, 10:00 AM"
-                  },
-                  {
-                    title: "Database Management Systems",
-                    code: "CS304",
-                    instructor: "Prof. Lisa Wong",
-                    progress: 65,
-                    category: "Core",
-                    credits: 3,
-                    nextClass: "Today, 2:00 PM"
-                  },
-                  {
-                    title: "Web Development",
-                    code: "CS310",
-                    instructor: "Dr. Michael Stevens",
-                    progress: 82,
-                    category: "Elective",
-                    credits: 3,
-                    nextClass: "Wednesday, 11:30 AM"
-                  },
-                  {
-                    title: "Machine Learning Fundamentals",
-                    code: "CS420",
-                    instructor: "Dr. Sarah Johnson",
-                    progress: 45,
-                    category: "Elective",
-                    credits: 4,
-                    nextClass: "Friday, 9:00 AM"
-                  }
-                ].map((course, i) => (
-                  <CourseCard key={i} {...course} />
+                {courses.map((course) => (
+                  <CourseCard 
+                    key={course.id} 
+                    {...course} 
+                    progress={Math.floor(Math.random() * 60) + 30} // Simulate random progress
+                  />
                 ))}
               </div>
             </CardContent>

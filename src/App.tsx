@@ -1,4 +1,3 @@
-
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { Toaster } from "@/components/ui/toaster";
@@ -6,6 +5,7 @@ import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { AppShell } from "@/components/layout/app-shell";
 import { AuthProvider, useAuth } from '@/contexts/auth-context';
+import { CoursesProvider } from '@/contexts/courses-context';
 
 // Auth Pages
 import Login from "./pages/auth/login";
@@ -77,143 +77,145 @@ const App = () => (
   <QueryClientProvider client={queryClient}>
     <TooltipProvider>
       <AuthProvider>
-        <Toaster />
-        <Sonner />
-        <BrowserRouter>
-          <Routes>
-            <Route path="/login" element={<Login />} />
-            <Route path="/register" element={<Register />} />
-            
-            <Route element={<ProtectedRoute><AppShell /></ProtectedRoute>}>
-              <Route path="/" element={<DashboardSelector />} />
+        <CoursesProvider>
+          <Toaster />
+          <Sonner />
+          <BrowserRouter>
+            <Routes>
+              <Route path="/login" element={<Login />} />
+              <Route path="/register" element={<Register />} />
               
-              {/* Student Routes */}
-              <Route path="/courses" element={
-                <RoleRoute allowedRoles={['student', 'faculty']}>
-                  <div className="h-full p-4 flex items-center justify-center">
-                    <h2 className="text-xl font-medium">Courses Page</h2>
-                    <p className="text-muted-foreground">(Under development)</p>
-                  </div>
-                </RoleRoute>
-              } />
-              <Route path="/coding-tracks" element={
-                <RoleRoute allowedRoles={['student']}>
-                  <div className="h-full p-4 flex items-center justify-center">
-                    <h2 className="text-xl font-medium">Coding Tracks Page</h2>
-                    <p className="text-muted-foreground">(Under development)</p>
-                  </div>
-                </RoleRoute>
-              } />
-              <Route path="/assignments" element={
-                <RoleRoute allowedRoles={['student']}>
-                  <div className="h-full p-4 flex items-center justify-center">
-                    <h2 className="text-xl font-medium">Assignments Page</h2>
-                    <p className="text-muted-foreground">(Under development)</p>
-                  </div>
-                </RoleRoute>
-              } />
-              <Route path="/assignments/:id" element={
-                <RoleRoute allowedRoles={['student']}>
-                  <div className="h-full p-4 flex items-center justify-center">
-                    <h2 className="text-xl font-medium">Assignment Details Page</h2>
-                    <p className="text-muted-foreground">(Under development)</p>
-                  </div>
-                </RoleRoute>
-              } />
-              <Route path="/code-editor" element={
-                <RoleRoute allowedRoles={['student', 'faculty']}>
-                  <CodeEditorPage />
-                </RoleRoute>
-              } />
-              <Route path="/ai-assistant" element={
-                <RoleRoute allowedRoles={['student', 'faculty']}>
-                  <AIAssistantPage />
-                </RoleRoute>
-              } />
-              <Route path="/progress" element={
-                <RoleRoute allowedRoles={['student', 'faculty']}>
-                  <ProgressPage />
-                </RoleRoute>
-              } />
-              <Route path="/calendar" element={
-                <RoleRoute allowedRoles={['student', 'faculty', 'admin']}>
-                  <div className="h-full p-4 flex items-center justify-center">
-                    <h2 className="text-xl font-medium">Calendar Page</h2>
-                    <p className="text-muted-foreground">(Under development)</p>
-                  </div>
-                </RoleRoute>
-              } />
-              
-              {/* Faculty Routes */}
-              <Route path="/assignments" element={
-                <RoleRoute allowedRoles={['faculty']}>
-                  <div className="h-full p-4 flex items-center justify-center">
-                    <h2 className="text-xl font-medium">Assignments Page</h2>
-                    <p className="text-muted-foreground">(Under development)</p>
-                  </div>
-                </RoleRoute>
-              } />
-              <Route path="/students" element={
-                <RoleRoute allowedRoles={['faculty', 'admin']}>
-                  <div className="h-full p-4 flex items-center justify-center">
-                    <h2 className="text-xl font-medium">Students Page</h2>
-                    <p className="text-muted-foreground">(Under development)</p>
-                  </div>
-                </RoleRoute>
-              } />
-              <Route path="/coding-challenges" element={
-                <RoleRoute allowedRoles={['faculty', 'admin']}>
-                  <div className="h-full p-4 flex items-center justify-center">
-                    <h2 className="text-xl font-medium">Coding Challenges Page</h2>
-                    <p className="text-muted-foreground">(Under development)</p>
-                  </div>
-                </RoleRoute>
-              } />
-              
-              {/* Admin Routes */}
-              <Route path="/dashboard" element={
-                <RoleRoute allowedRoles={['admin']}>
-                  <AdminDashboard />
-                </RoleRoute>
-              } />
-              <Route path="/departments" element={
-                <RoleRoute allowedRoles={['admin']}>
-                  <div className="h-full p-4 flex items-center justify-center">
-                    <h2 className="text-xl font-medium">Departments Page</h2>
-                    <p className="text-muted-foreground">(Under development)</p>
-                  </div>
-                </RoleRoute>
-              } />
-              <Route path="/users" element={
-                <RoleRoute allowedRoles={['admin']}>
-                  <div className="h-full p-4 flex items-center justify-center">
-                    <h2 className="text-xl font-medium">Users Page</h2>
-                    <p className="text-muted-foreground">(Under development)</p>
-                  </div>
-                </RoleRoute>
-              } />
-              <Route path="/analytics" element={
-                <RoleRoute allowedRoles={['admin']}>
-                  <div className="h-full p-4 flex items-center justify-center">
-                    <h2 className="text-xl font-medium">Analytics Page</h2>
-                    <p className="text-muted-foreground">(Under development)</p>
-                  </div>
-                </RoleRoute>
-              } />
-              <Route path="/placements" element={
-                <RoleRoute allowedRoles={['admin']}>
-                  <div className="h-full p-4 flex items-center justify-center">
-                    <h2 className="text-xl font-medium">Placements Page</h2>
-                    <p className="text-muted-foreground">(Under development)</p>
-                  </div>
-                </RoleRoute>
-              } />
-              
-              {/* Catch-all route */}
-              <Route path="*" element={<NotFound />} />
-            </Route>
-          </Routes>
-        </BrowserRouter>
+              <Route element={<ProtectedRoute><AppShell /></ProtectedRoute>}>
+                <Route path="/" element={<DashboardSelector />} />
+                
+                {/* Student Routes */}
+                <Route path="/courses" element={
+                  <RoleRoute allowedRoles={['student', 'faculty']}>
+                    <div className="h-full p-4 flex items-center justify-center">
+                      <h2 className="text-xl font-medium">Courses Page</h2>
+                      <p className="text-muted-foreground">(Under development)</p>
+                    </div>
+                  </RoleRoute>
+                } />
+                <Route path="/coding-tracks" element={
+                  <RoleRoute allowedRoles={['student']}>
+                    <div className="h-full p-4 flex items-center justify-center">
+                      <h2 className="text-xl font-medium">Coding Tracks Page</h2>
+                      <p className="text-muted-foreground">(Under development)</p>
+                    </div>
+                  </RoleRoute>
+                } />
+                <Route path="/assignments" element={
+                  <RoleRoute allowedRoles={['student']}>
+                    <div className="h-full p-4 flex items-center justify-center">
+                      <h2 className="text-xl font-medium">Assignments Page</h2>
+                      <p className="text-muted-foreground">(Under development)</p>
+                    </div>
+                  </RoleRoute>
+                } />
+                <Route path="/assignments/:id" element={
+                  <RoleRoute allowedRoles={['student']}>
+                    <div className="h-full p-4 flex items-center justify-center">
+                      <h2 className="text-xl font-medium">Assignment Details Page</h2>
+                      <p className="text-muted-foreground">(Under development)</p>
+                    </div>
+                  </RoleRoute>
+                } />
+                <Route path="/code-editor" element={
+                  <RoleRoute allowedRoles={['student', 'faculty']}>
+                    <CodeEditorPage />
+                  </RoleRoute>
+                } />
+                <Route path="/ai-assistant" element={
+                  <RoleRoute allowedRoles={['student', 'faculty']}>
+                    <AIAssistantPage />
+                  </RoleRoute>
+                } />
+                <Route path="/progress" element={
+                  <RoleRoute allowedRoles={['student', 'faculty']}>
+                    <ProgressPage />
+                  </RoleRoute>
+                } />
+                <Route path="/calendar" element={
+                  <RoleRoute allowedRoles={['student', 'faculty', 'admin']}>
+                    <div className="h-full p-4 flex items-center justify-center">
+                      <h2 className="text-xl font-medium">Calendar Page</h2>
+                      <p className="text-muted-foreground">(Under development)</p>
+                    </div>
+                  </RoleRoute>
+                } />
+                
+                {/* Faculty Routes */}
+                <Route path="/assignments" element={
+                  <RoleRoute allowedRoles={['faculty']}>
+                    <div className="h-full p-4 flex items-center justify-center">
+                      <h2 className="text-xl font-medium">Assignments Page</h2>
+                      <p className="text-muted-foreground">(Under development)</p>
+                    </div>
+                  </RoleRoute>
+                } />
+                <Route path="/students" element={
+                  <RoleRoute allowedRoles={['faculty', 'admin']}>
+                    <div className="h-full p-4 flex items-center justify-center">
+                      <h2 className="text-xl font-medium">Students Page</h2>
+                      <p className="text-muted-foreground">(Under development)</p>
+                    </div>
+                  </RoleRoute>
+                } />
+                <Route path="/coding-challenges" element={
+                  <RoleRoute allowedRoles={['faculty', 'admin']}>
+                    <div className="h-full p-4 flex items-center justify-center">
+                      <h2 className="text-xl font-medium">Coding Challenges Page</h2>
+                      <p className="text-muted-foreground">(Under development)</p>
+                    </div>
+                  </RoleRoute>
+                } />
+                
+                {/* Admin Routes */}
+                <Route path="/dashboard" element={
+                  <RoleRoute allowedRoles={['admin']}>
+                    <AdminDashboard />
+                  </RoleRoute>
+                } />
+                <Route path="/departments" element={
+                  <RoleRoute allowedRoles={['admin']}>
+                    <div className="h-full p-4 flex items-center justify-center">
+                      <h2 className="text-xl font-medium">Departments Page</h2>
+                      <p className="text-muted-foreground">(Under development)</p>
+                    </div>
+                  </RoleRoute>
+                } />
+                <Route path="/users" element={
+                  <RoleRoute allowedRoles={['admin']}>
+                    <div className="h-full p-4 flex items-center justify-center">
+                      <h2 className="text-xl font-medium">Users Page</h2>
+                      <p className="text-muted-foreground">(Under development)</p>
+                    </div>
+                  </RoleRoute>
+                } />
+                <Route path="/analytics" element={
+                  <RoleRoute allowedRoles={['admin']}>
+                    <div className="h-full p-4 flex items-center justify-center">
+                      <h2 className="text-xl font-medium">Analytics Page</h2>
+                      <p className="text-muted-foreground">(Under development)</p>
+                    </div>
+                  </RoleRoute>
+                } />
+                <Route path="/placements" element={
+                  <RoleRoute allowedRoles={['admin']}>
+                    <div className="h-full p-4 flex items-center justify-center">
+                      <h2 className="text-xl font-medium">Placements Page</h2>
+                      <p className="text-muted-foreground">(Under development)</p>
+                    </div>
+                  </RoleRoute>
+                } />
+                
+                {/* Catch-all route */}
+                <Route path="*" element={<NotFound />} />
+              </Route>
+            </Routes>
+          </BrowserRouter>
+        </CoursesProvider>
       </AuthProvider>
     </TooltipProvider>
   </QueryClientProvider>

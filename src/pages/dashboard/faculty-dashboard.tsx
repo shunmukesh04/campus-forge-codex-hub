@@ -1,7 +1,8 @@
-
 import React from 'react';
 import { StatsCard } from '@/components/dashboard/stats-card';
 import { CourseCard } from '@/components/dashboard/course-card';
+import { AddCourseDialog } from '@/components/faculty/add-course-dialog';
+import { useCourses } from '@/contexts/courses-context';
 import { 
   BookOpen, 
   Users, 
@@ -11,7 +12,8 @@ import {
   CheckCircle, 
   AlertCircle,
   ArrowRight,
-  BadgeCheck
+  BadgeCheck,
+  PlusCircle
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import {
@@ -32,9 +34,11 @@ import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Badge } from '@/components/ui/badge';
 import { Progress } from '@/components/ui/progress';
 import { useAuth } from '@/contexts/auth-context';
+import { Link } from 'react-router-dom';
 
 const FacultyDashboard = () => {
   const { user } = useAuth();
+  const { courses } = useCourses();
   
   if (!user) return null;
   
@@ -52,6 +56,7 @@ const FacultyDashboard = () => {
             <FileCheck className="mr-2 h-4 w-4" />
             Create Assignment
           </Button>
+          <AddCourseDialog />
           <Button className="h-9">
             <Calendar className="mr-2 h-4 w-4" />
             Schedule Session
@@ -62,7 +67,7 @@ const FacultyDashboard = () => {
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
         <StatsCard
           title="Total Courses"
-          value="4"
+          value={courses.length.toString()}
           icon={<BookOpen className="h-4 w-4" />}
           description="Active courses this semester"
         />
@@ -99,48 +104,24 @@ const FacultyDashboard = () => {
         
         <TabsContent value="courses" className="space-y-4">
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-            {[
-              {
-                title: "Data Structures & Algorithms",
-                code: "CS301",
-                instructor: user.name,
-                category: "Core",
-                credits: 4,
-                students: 42,
-                nextClass: "Today, 10:00 AM"
-              },
-              {
-                title: "Advanced Database Systems",
-                code: "CS404",
-                instructor: user.name,
-                category: "Elective",
-                credits: 3,
-                students: 28,
-                nextClass: "Tomorrow, 2:00 PM"
-              },
-              {
-                title: "Software Engineering",
-                code: "CS305",
-                instructor: user.name,
-                category: "Core",
-                credits: 4,
-                students: 38,
-                nextClass: "Wednesday, 11:30 AM"
-              },
-              {
-                title: "Computer Networks",
-                code: "CS403",
-                instructor: user.name,
-                category: "Core",
-                credits: 3,
-                students: 35,
-                nextClass: "Thursday, 9:00 AM"
-              }
-            ].map((course, i) => (
-              <CourseCard key={i} {...course} />
+            {courses.map((course) => (
+              <CourseCard key={course.id} {...course} />
             ))}
+            <Card 
+              className="h-full border-dashed flex flex-col items-center justify-center p-6 hover:bg-muted/50 transition-colors cursor-pointer"
+              onClick={() => {
+                const addCourseButton = document.querySelector('[aria-label="Add Course"]');
+                if (addCourseButton instanceof HTMLElement) {
+                  addCourseButton.click();
+                }
+              }}
+            >
+              <PlusCircle className="h-12 w-12 text-muted-foreground mb-4" />
+              <p className="text-muted-foreground font-medium">Add New Course</p>
+            </Card>
           </div>
         </TabsContent>
+        
         
         <TabsContent value="students" className="space-y-4">
           <Card>
